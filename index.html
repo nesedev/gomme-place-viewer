@@ -6,7 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Gomme r/Place viewer</title>
         <style>
-            body, html {
+            body,
+            html {
                 height: 100%;
                 margin: 0;
             }
@@ -34,16 +35,16 @@
             }
 
             #image {
-                transform-origin : 0px 0px;
+                transform-origin: 0px 0px;
             }
         </style>
     </head>
     <body>
         <div id="image-container">
-            <img id="image" src="https://www.gommehd.net/place/api/image/">
+            <img id="image">
         </div>
         <script>
-            let zoomScale = 1;
+            let zoomScale = 1.0;
             let dragStart = { x: 0, y: 0 };
             let offset = { x: 0, y: 0 };
             let panning = false;
@@ -51,25 +52,31 @@
             const imageContainer = document.getElementById('image-container');
             const image = document.getElementById('image');
 
-            /*function updateURL() {
-            console.log('setting url')
-            image.src = 'https://www.gommehd.net/place/api/image/?lu=' + Date.now();
+            function updateURL() {
+                image.src = 'https://www.gommehd.net/place/api/image/?lu=' + Date.now();
+            }
+            updateURL();
+
+            image.onerror = function () {
+                setTimeout(function () { 
+                    image.src = 'https://www.gommehd.net/place/api/image/?lu=' + Date.now(); 
+                }, 1000);
             }
 
             setInterval(function() {
-            updateURL();
-            }, 60000)*/
+                updateURL();
+            }, 30 * 1000)
 
             function checkUrl() {
                 const params = new URLSearchParams(location.hash.substring(1));
 
                 const paramX = parseInt(params.get('x'));
                 const paramY = parseInt(params.get('y'));
-                const paramZ = parseInt(params.get('z'));
+                const paramZ = parseFloat(params.get('z'));
 
-                if (paramX) offset.x = params.get('x');
-                if (paramY) offset.y = params.get('y');
-                if (paramZ) zoomScale = params.get('z');
+                if (paramX) offset.x = paramX;
+                if (paramY) offset.y = paramY;
+                if (paramZ) zoomScale = paramZ;
 
                 if (paramX || paramY || paramZ) {
                     setTransform();
@@ -128,8 +135,8 @@
                 const maxZoom = 100;
 
                 const xs = (e.clientX - e.target.offsetLeft - offset.x) / zoomScale;
-                const ys = (e.clientY - e.target.offsetTop - offset.y) / zoomScale;      
-                
+                const ys = (e.clientY - e.target.offsetTop - offset.y) / zoomScale;
+
                 let newZoomScale = zoomScale;
                 const delta = -e.deltaY;
                 if (delta > 0) {

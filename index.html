@@ -84,6 +84,8 @@
             }
             checkUrl();
 
+            window.onhashchange = checkUrl;
+
             function setUrl() {
                 const params = new URLSearchParams();
                 params.set('x', Math.round(offset.x));
@@ -150,7 +152,7 @@
                 } else if (newZoomScale >= maxZoom) {
                     zoomScale = maxZoom;
                 } else {
-                    zoomScale = newZoomScale;
+                    zoomScale = parseFloat(newZoomScale.toFixed(2));
                 }
 
                 offset.x = e.clientX - e.target.offsetLeft - xs * zoomScale;

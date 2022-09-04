@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Gomme r/Place viewer</title>
         <style>
             body,
@@ -17,25 +17,23 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                overflow: hidden;
+                touch-action: none;
             }
 
             #image-container {
-                height: 90vmin;
-                width: 90vmin;
+                height: 80vmin;
+                width: 80vmin;
                 overflow: hidden;
                 display: flex;
                 cursor: grab;
                 border: 10px solid #0f0f0f;
                 background: black;
             }
-            
-            #image-container:active {
-                cursor: grabbing;
-            }
 
             .pixelated {
                 image-rendering: crisp-edges;
-                image-rendering: pixelated;
+                image-rendering: pixelated;image-rendering: -webkit-optimize-contrast;
             }
 
             #image {
@@ -52,6 +50,7 @@
             let dragStart = { x: 0, y: 0 };
             let offset = { x: 0, y: 0 };
             let panning = false;
+            let pinching = false;
 
             const imageContainer = document.getElementById('image-container');
             const image = document.getElementById('image');
@@ -102,27 +101,43 @@
 
             imageContainer.onwheel = zoom;
 
-            imageContainer.onmousedown = function (e) {
+            imageContainer.onpointerdown = function (e) {
                 e.preventDefault();
+                if (panning) return;
                 dragStart = { x: e.clientX - offset.x, y: e.clientY - offset.y };
                 panning = true;
             }
 
-            imageContainer.onmouseup = function (e) {
+            imageContainer.onpointerup = function (e) {
                 panning = false;
                 setUrl();
             }
-            imageContainer.onmouseleave = function (e) {
+            imageContainer.onpointerleave = function (e) {
                 panning = false;
             }
 
             imageContainer.onmousemove = function (e) {
-                if (!panning) {
-                    return;
-                }
+                console.log(e);
+                if (!panning) return;
                 offset.x = (e.clientX - dragStart.x);
                 offset.y = (e.clientY - dragStart.y);
                 setTransform();
+            }
+
+            imageContainer.ontouchstart = function (e) {
+                //dragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                if (e.touches.length == 2) {
+                    pinching = true;
+                }
+            }
+
+            imageContainer.ontouchmove = function (e) {
+                console.log(pinching, e.touches);
+                if (panning) {
+                    offset.x = (e.touches[0].clientX - dragStart.x);
+                    offset.y = (e.touches[0].clientY - dragStart.y);
+                    setTransform();
+                }
             }
 
             function setTransform() {

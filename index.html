@@ -57,15 +57,16 @@
             const image = document.getElementById('image');
 
             function updateURL() {
-                image.src = 'https://www.gommehd.net/place/api/image/?lu=' + Date.now();
+                // image.src = 'https://www.gommehd.net/place/api/image/?lu=' + Date.now();
+                image.src = 'https://static.gommehd.io/place-2022-final.png';
             }
             updateURL();
 
-            image.onerror = function () {
-                setTimeout(function () { 
-                    image.src = 'https://www.gommehd.net/place/api/image/?lu=' + Date.now(); 
-                }, 1000);
-            }
+            // image.onerror = function () {
+            //     setTimeout(function () { 
+            //         image.src = 'https://www.gommehd.net/place/api/image/?lu=' + Date.now(); 
+            //     }, 1000);
+            // }
 
             setInterval(function() {
                 updateURL();
